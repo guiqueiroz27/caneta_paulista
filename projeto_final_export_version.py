@@ -220,7 +220,12 @@ def leis_prefeitura_sp (data_inicio, data_fim):
 
 """# Função acessando e gravando dados novos GSheet"""
 
-def atualizar_planilha(data_inicio='01/01/2024', planilha_key=gsheet_key, arquivo_credenciais=/etc/secrets/insperaa-f16b8130bed9.json):
+def atualizar_planilha(data_inicio='01/01/2024', planilha_key=None, arquivo_credenciais=None):
+    if planilha_key is None:
+        planilha_key = gsheet_key
+    if arquivo_credenciais is None:
+        arquivo_credenciais = "/etc/secrets/insperaa-f16b8130bed9.json"    
+        
     # Obtenha a data atual
     data_fim = datetime.now().strftime('%d/%m/%Y')
 
@@ -254,7 +259,6 @@ def atualizar_planilha(data_inicio='01/01/2024', planilha_key=gsheet_key, arquiv
     novos_adicionados_estadual = pd.DataFrame(columns=['LEI', 'DATA', 'LINK', 'DESCRIÇÃO'])
 
     if not novos_municipais.empty:
-        # Filtrar dados novos que não estão presentes no DataFrame da planilha
         novos_municipais = novos_municipais[~novos_municipais["Lei"].isin(df_municipal["Lei"])]
         if not novos_municipais.empty:
             # Adicionar dados novos à planilha
@@ -262,7 +266,6 @@ def atualizar_planilha(data_inicio='01/01/2024', planilha_key=gsheet_key, arquiv
             novos_adicionados_municipal = novos_municipais.copy()
 
     if not novos_estaduais.empty:
-        # Filtrar dados novos que não estão presentes no DataFrame da planilha
         novos_estaduais = novos_estaduais[~novos_estaduais["LEI"].isin(df_estadual["LEI"])]
         if not novos_estaduais.empty:
             # Adicionar dados novos à planilha
@@ -275,6 +278,7 @@ def atualizar_planilha(data_inicio='01/01/2024', planilha_key=gsheet_key, arquiv
 
     # Retorne as tabelas HTML separadamente
     return tabela_html_municipal, tabela_html_estadual
+
 
 """#Função para verificar se a tabela está vazia"""
 
