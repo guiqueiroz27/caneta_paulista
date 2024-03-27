@@ -11,7 +11,7 @@ gsheet_key= os.environ["gsheet_key"]
 password_email= os.environ["password_email"]
 
 """# Função raspagem governo de SP"""
-
+import os
 def leis_governo_sp(data_inicio, data_fim):
     cookies = {
         'OptanonConsent': 'isGpcEnabled=0&datestamp=Thu+Mar+14+2024+19%3A53%3A14+GMT-0300+(Hor%C3%A1rio+Padr%C3%A3o+de+Bras%C3%ADlia)&version=202302.1.0&isIABGlobal=false&hosts=&consentId=071ddc65-ae8a-499f-9d5c-72d6763c7a06&interactionCount=2&landingPath=NotLandingPage&groups=C0004%3A1%2CC0002%3A1%2CC0003%3A1%2CC0001%3A1&AwaitingReconsent=false&geolocation=BR%3BSP',
