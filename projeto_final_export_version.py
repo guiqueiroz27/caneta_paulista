@@ -15,7 +15,6 @@ import requests
 import re
 from urllib.parse import quote
 from datetime import datetime
-!pip install gspread oauth2client
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import smtplib
