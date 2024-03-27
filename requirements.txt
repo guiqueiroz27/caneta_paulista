@@ -3,5 +3,3 @@ pandas
 requests
 gspread
 oauth2client
-os
-Flask==2.0.1
