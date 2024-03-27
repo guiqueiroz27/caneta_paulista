@@ -220,7 +220,7 @@ def leis_prefeitura_sp (data_inicio, data_fim):
 
 """# Função acessando e gravando dados novos GSheet"""
 
-def atualizar_planilha(data_inicio='01/01/2024', planilha_key=gsheet_key, arquivo_credenciais="insperaa-f16b8130bed9.json"):
+def atualizar_planilha(data_inicio='01/01/2024', planilha_key=gsheet_key, arquivo_credenciais=/etc/secrets/insperaa-f16b8130bed9.json):
     # Obtenha a data atual
     data_fim = datetime.now().strftime('%d/%m/%Y')
 
