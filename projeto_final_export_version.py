@@ -8,7 +8,6 @@ Original file is located at
 """
 import os
 import requests
-from flask import Flask, request
 
 gsheet_key= os.environ["gsheet_key"]
 password_email= os.environ["password_email"]
