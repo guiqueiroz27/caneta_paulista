@@ -214,7 +214,7 @@ def leis_prefeitura_sp (data_inicio, data_fim):
   df.loc[df['Lei'].str.len() >= 5, 'Link'] = 'https://legislacao.prefeitura.sp.gov.br/leis/lei-' + df['Lei'] + '-de-' + df['Data'].apply(modificar_data)
 
   df.loc[df['Lei'].str.len() == 1, 'Lei'] = '-'
-
+	
 def unificar_proponentes(group):
     if len(group) > 1 and group['Descrição'].nunique() == 1:
         return ', '.join(group['Proponente'])
