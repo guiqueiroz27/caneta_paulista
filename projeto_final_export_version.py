@@ -215,7 +215,7 @@ def leis_prefeitura_sp (data_inicio, data_fim):
 
   df.loc[df['Lei'].str.len() == 1, 'Lei'] = '-'
 	
-def unificar_proponentes(group):
+  def unificar_proponentes(group):
     if len(group) > 1 and group['Descrição'].nunique() == 1:
         return ', '.join(group['Proponente'])
     else:
