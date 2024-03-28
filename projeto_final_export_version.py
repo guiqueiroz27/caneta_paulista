@@ -69,7 +69,7 @@ def leis_governo_sp(data_inicio, data_fim):
         '_idsTema': '1',
         'palavraChaveEscape': '',
         'palavraChaveDecode': '',
-        '_idsAutorPropositura': '1',
+        '_idsAutorsitura': '1',
         '_temQuestionamentos': 'on',
         '_pesquisaAvancada': 'on',
         '__ncforminfo': 'JYoCGELk0BvJLg9P_4v7WX0XtFPFNdyCfLpHZRtPb5KPsahU2IXV0saXb6tAHPeRjsuEMd6ajhlJcFv47y8f40MvrSA3Eiq1_uEoYEbvj6Rsq91tLpnwdbL0Jj7d7jD_0cPVyxSbmYIDYbBdsE8hnF-SuRLRceB5q-KI9eOJt7yfhznzK_OYdSVQ8CV3DB0f_I5mO2XCf6uX21pRUWIFzdsFlAGxtQ9O61UZcuAAu2jNDUKxkuBgReYDEDz517SRFc-gF8Q9PEQjuvu_gh_Hx3lF1PUXmWtRRjAg72hL4HyLv-ny2Xm3c6IRYpqIzGLt4Am_V5xMFUTVv6AKUsgEwNPRDdjmuVLd-Yowo81HYtVx0vn-69eFoEHE-LKIKoPjjBlwYnRVhTdcQOhDmBZF8pDThBvRxba7ik3izaYf1EJKOAfu_rTDXTk5-nWinN9CmgGuJ4UFkRHPTgO8uxWb6Mb53swgUI40jAjttZjr3ghxlYpIi8g37LRwG-SDlJyfVbk-m5ZxFHKReaEAMUiWduHzylyCvozRI7eO7FSz4Fjv7XR2evQE4EIa6fkY1_jyptbHTrXarnk1Sw78KUj-znDtFdbRNppKdVc8JS1VNjBfcH0rO31ggHob7eZbCDoJ3yhA81_RXtP8-w6-FicZQ8kKrQlnSJLqCDArZtOVWw_hcAloRXZI2ci0Vqrqpc3QeVtmzaqchlnjXQt7YN7GqclfygNx6QjGDnntM8HurDVwRcZ2AqWJCbomQ8NnSCCr',
@@ -184,7 +184,7 @@ def leis_prefeitura_sp (data_inicio, data_fim):
   df = df.drop(df.index[0])
   df = df.rename(columns={0: 'Data'})
   df = df.rename(columns={1: 'Tipo'})
-  df = df.rename(columns={2: 'Proponente'})
+  df = df.rename(columns={2: 'nente'})
   df = df.rename(columns={3: 'Diploma legal'})
   df = df.rename(columns={4: 'Matéria legislativa'})
   df = df.rename(columns={5: 'Número'})
@@ -193,7 +193,7 @@ def leis_prefeitura_sp (data_inicio, data_fim):
 
   df['Link'] = ''
 
-  nova_ordem = ['Diploma legal', 'Data', 'Link', 'Ementa', 'Matéria legislativa', 'Proponente']
+  nova_ordem = ['Diploma legal', 'Data', 'Link', 'Ementa', 'Matéria legislativa', 'nente']
 
   df = df[nova_ordem]
 
@@ -221,15 +221,15 @@ def unificar_proponentes(group):
     else:
         return group['Proponente'].iloc[0]
 
-proponentes_serie = df.groupby(['Lei', 'Descrição']).apply(unificar_proponentes, include_groups=False)
+  proponentes_serie = df.groupby(['Lei', 'Descrição']).apply(unificar_proponentes, include_groups=False)
 
-df['Proponente'] = df.set_index(['Lei', 'Descrição']).index.map(proponentes_serie)
+  df['Proponente'] = df.set_index(['Lei', 'Descrição']).index.map(proponentes_serie)
 
-df = df.drop_duplicates(subset=['Lei', 'Descrição'])
+  df = df.drop_duplicates(subset=['Lei', 'Descrição'])
 
-df = df.reset_index(drop=True)
+  df = df.reset_index(drop=True)
 
-return df
+  return df
 
 """# Função acessando e gravando dados novos GSheet"""
 
