@@ -221,7 +221,7 @@ def leis_prefeitura_sp (data_inicio, data_fim):
     else:
         return group['Proponente'].iloc[0]
 
-  proponentes_serie = df.groupby(['Lei', 'Descrição']).apply(unificar_proponentes, include_groups=False)
+  proponentes_serie = df.groupby(['Lei', 'Descrição']).apply(unificar_proponentes)
 
   df['Proponente'] = df.set_index(['Lei', 'Descrição']).index.map(proponentes_serie)
 
@@ -230,7 +230,7 @@ def leis_prefeitura_sp (data_inicio, data_fim):
   df = df.reset_index(drop=True)
 
   return df
-
+	
 """# Função acessando e gravando dados novos GSheet"""
 
 def atualizar_planilha(data_inicio='01/01/2024', planilha_key=None, arquivo_credenciais=None):
