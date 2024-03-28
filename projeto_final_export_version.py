@@ -15,6 +15,7 @@ import requests
 import re
 from urllib.parse import quote
 from datetime import datetime
+!pip install gspread oauth2client
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import smtplib
@@ -25,6 +26,7 @@ gsheet_key= os.environ["gsheet_key"]
 password_email= os.environ["password_email"]
 
 """# Função raspagem governo de SP"""
+
 def leis_governo_sp(data_inicio, data_fim):
     cookies = {
         'OptanonConsent': 'isGpcEnabled=0&datestamp=Thu+Mar+14+2024+19%3A53%3A14+GMT-0300+(Hor%C3%A1rio+Padr%C3%A3o+de+Bras%C3%ADlia)&version=202302.1.0&isIABGlobal=false&hosts=&consentId=071ddc65-ae8a-499f-9d5c-72d6763c7a06&interactionCount=2&landingPath=NotLandingPage&groups=C0004%3A1%2CC0002%3A1%2CC0003%3A1%2CC0001%3A1&AwaitingReconsent=false&geolocation=BR%3BSP',
@@ -69,7 +71,7 @@ def leis_governo_sp(data_inicio, data_fim):
         '_idsTema': '1',
         'palavraChaveEscape': '',
         'palavraChaveDecode': '',
-        '_idsAutorsitura': '1',
+        '_idsAutorPropositura': '1',
         '_temQuestionamentos': 'on',
         '_pesquisaAvancada': 'on',
         '__ncforminfo': 'JYoCGELk0BvJLg9P_4v7WX0XtFPFNdyCfLpHZRtPb5KPsahU2IXV0saXb6tAHPeRjsuEMd6ajhlJcFv47y8f40MvrSA3Eiq1_uEoYEbvj6Rsq91tLpnwdbL0Jj7d7jD_0cPVyxSbmYIDYbBdsE8hnF-SuRLRceB5q-KI9eOJt7yfhznzK_OYdSVQ8CV3DB0f_I5mO2XCf6uX21pRUWIFzdsFlAGxtQ9O61UZcuAAu2jNDUKxkuBgReYDEDz517SRFc-gF8Q9PEQjuvu_gh_Hx3lF1PUXmWtRRjAg72hL4HyLv-ny2Xm3c6IRYpqIzGLt4Am_V5xMFUTVv6AKUsgEwNPRDdjmuVLd-Yowo81HYtVx0vn-69eFoEHE-LKIKoPjjBlwYnRVhTdcQOhDmBZF8pDThBvRxba7ik3izaYf1EJKOAfu_rTDXTk5-nWinN9CmgGuJ4UFkRHPTgO8uxWb6Mb53swgUI40jAjttZjr3ghxlYpIi8g37LRwG-SDlJyfVbk-m5ZxFHKReaEAMUiWduHzylyCvozRI7eO7FSz4Fjv7XR2evQE4EIa6fkY1_jyptbHTrXarnk1Sw78KUj-znDtFdbRNppKdVc8JS1VNjBfcH0rO31ggHob7eZbCDoJ3yhA81_RXtP8-w6-FicZQ8kKrQlnSJLqCDArZtOVWw_hcAloRXZI2ci0Vqrqpc3QeVtmzaqchlnjXQt7YN7GqclfygNx6QjGDnntM8HurDVwRcZ2AqWJCbomQ8NnSCCr',
@@ -184,7 +186,7 @@ def leis_prefeitura_sp (data_inicio, data_fim):
   df = df.drop(df.index[0])
   df = df.rename(columns={0: 'Data'})
   df = df.rename(columns={1: 'Tipo'})
-  df = df.rename(columns={2: 'nente'})
+  df = df.rename(columns={2: 'Proponente'})
   df = df.rename(columns={3: 'Diploma legal'})
   df = df.rename(columns={4: 'Matéria legislativa'})
   df = df.rename(columns={5: 'Número'})
@@ -193,7 +195,7 @@ def leis_prefeitura_sp (data_inicio, data_fim):
 
   df['Link'] = ''
 
-  nova_ordem = ['Diploma legal', 'Data', 'Link', 'Ementa', 'Matéria legislativa', 'nente']
+  nova_ordem = ['Diploma legal', 'Data', 'Link', 'Ementa', 'Matéria legislativa', 'Proponente']
 
   df = df[nova_ordem]
 
@@ -214,7 +216,7 @@ def leis_prefeitura_sp (data_inicio, data_fim):
   df.loc[df['Lei'].str.len() >= 5, 'Link'] = 'https://legislacao.prefeitura.sp.gov.br/leis/lei-' + df['Lei'] + '-de-' + df['Data'].apply(modificar_data)
 
   df.loc[df['Lei'].str.len() == 1, 'Lei'] = '-'
-	
+
   def unificar_proponentes(group):
     if len(group) > 1 and group['Descrição'].nunique() == 1:
         return ', '.join(group['Proponente'])
@@ -230,15 +232,10 @@ def leis_prefeitura_sp (data_inicio, data_fim):
   df = df.reset_index(drop=True)
 
   return df
-	
+
 """# Função acessando e gravando dados novos GSheet"""
 
-def atualizar_planilha(data_inicio='01/01/2024', planilha_key=None, arquivo_credenciais=None):
-    if planilha_key is None:
-        planilha_key = gsheet_key
-    if arquivo_credenciais is None:
-        arquivo_credenciais = "/etc/secrets/insperaa-f16b8130bed9.json"    
-        
+def atualizar_planilha(data_inicio='01/01/2024', planilha_key=gsheet_key, arquivo_credenciais="insperaa-f16b8130bed9.json"):
     # Obtenha a data atual
     data_fim = datetime.now().strftime('%d/%m/%Y')
 
@@ -272,6 +269,7 @@ def atualizar_planilha(data_inicio='01/01/2024', planilha_key=None, arquivo_cred
     novos_adicionados_estadual = pd.DataFrame(columns=['LEI', 'DATA', 'LINK', 'DESCRIÇÃO'])
 
     if not novos_municipais.empty:
+        # Filtrar dados novos que não estão presentes no DataFrame da planilha
         novos_municipais = novos_municipais[~novos_municipais["Lei"].isin(df_municipal["Lei"])]
         if not novos_municipais.empty:
             # Adicionar dados novos à planilha
@@ -279,6 +277,7 @@ def atualizar_planilha(data_inicio='01/01/2024', planilha_key=None, arquivo_cred
             novos_adicionados_municipal = novos_municipais.copy()
 
     if not novos_estaduais.empty:
+        # Filtrar dados novos que não estão presentes no DataFrame da planilha
         novos_estaduais = novos_estaduais[~novos_estaduais["LEI"].isin(df_estadual["LEI"])]
         if not novos_estaduais.empty:
             # Adicionar dados novos à planilha
@@ -291,7 +290,6 @@ def atualizar_planilha(data_inicio='01/01/2024', planilha_key=None, arquivo_cred
 
     # Retorne as tabelas HTML separadamente
     return tabela_html_municipal, tabela_html_estadual
-
 
 """#Função para verificar se a tabela está vazia"""
 
