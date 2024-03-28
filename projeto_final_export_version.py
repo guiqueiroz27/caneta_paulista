@@ -221,15 +221,15 @@ def leis_prefeitura_sp (data_inicio, data_fim):
     else:
         return group['Proponente'].iloc[0]
 
-  proponentes_serie = df.groupby(['Lei', 'Descrição']).apply(unificar_proponentes)
+ proponentes_serie = df.groupby(['Lei', 'Descrição']).apply(unificar_proponentes, include_groups=False)
 
-  df['Proponente'] = df.set_index(['Lei', 'Descrição']).index.map(proponentes_serie)
+ df['Proponente'] = df.set_index(['Lei', 'Descrição']).index.map(proponentes_serie)
 
-  df = df.drop_duplicates(subset=['Lei', 'Descrição'])
+ df = df.drop_duplicates(subset=['Lei', 'Descrição'])
 
-  df = df.reset_index(drop=True)
+ df = df.reset_index(drop=True)
 
-  return df
+ return df
 
 """# Função acessando e gravando dados novos GSheet"""
 
