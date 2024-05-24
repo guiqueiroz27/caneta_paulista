@@ -306,7 +306,7 @@ password = password_email  # MUDE AQUI
 
 # Dados para o email que será enviado:
 remetente = "queirozguilherme05@gmail.com"  # MUDE AQUI
-destinatarios = ["queirozguilherme05@gmail.com", "isabela.moya@estadao.com"]  # MUDE AQUI
+destinatarios = ["queirozguilherme05@gmail.com", "isabela.moya@estadao.com", "thiagofelixlima@gmail.com"]  # MUDE AQUI
 titulo = "Caneta paulista: novos projetos sancionados!"
 
 
