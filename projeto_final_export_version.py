@@ -200,10 +200,12 @@ def leis_prefeitura_sp (data_inicio, data_fim):
     'August': 'agosto', 'September': 'setembro', 'October': 'outubro',
     'November': 'novembro', 'December': 'dezembro'}
 
-  def modificar_data(data_string):
+def modificar_data(data_string):
+    if not data_string:
+        return ''
     data = datetime.strptime(data_string, '%d/%m/%Y')
-    mes_pt = meses_pt[data.strftime('%B')]
-    return f"{data.day}-de-{mes_pt}-de-{data.year}"
+    return data.strftime('%Y-%m-%d')
+
 
 # Aplicando a condição para criar o link apenas se 'Lei' tiver pelo menos cinco caracteres
   df.loc[df['Lei'].str.len() >= 5, 'Link'] = 'https://legislacao.prefeitura.sp.gov.br/leis/lei-' + df['Lei'] + '-de-' + df['Data'].apply(modificar_data)
@@ -300,7 +302,7 @@ password = password_email  # MUDE AQUI
 
 # Dados para o email que será enviado:
 remetente = "queirozguilherme05@gmail.com"  # MUDE AQUI
-destinatarios = ["queirozguilherme05@gmail.com", "isabela.moya@estadao.com", "thiagofelixlima@gmail.com"]  # MUDE AQUI
+destinatarios = ["queirozguilherme05@gmail.com"]  # MUDE AQUI
 titulo = "Caneta paulista: novos projetos sancionados!"
 
 
